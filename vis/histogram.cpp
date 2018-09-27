@@ -3,12 +3,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-cv::Mat vis::calcHist(const cv::Mat &img) {
+cv::Mat vis::calcHist(const cv::Mat &img, bool accumulate) {
     const int nBins = 256;
     const float range[] = {0, nBins};
     const float *histRange = {range};
     bool uniform = true;
-    bool accumulate = false;
     cv::Mat hist;
 
     cv::calcHist(&img, 1, nullptr, cv::Mat(), hist, 1, &nBins, &histRange, uniform, accumulate);
