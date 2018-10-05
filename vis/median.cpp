@@ -1,15 +1,16 @@
 #include "vis.h"
 
-cv::Mat vis::medianMinMax(const cv::Mat &img, unsigned int kernelSize, uchar min, uchar max){
+cv::Mat vis::medianMinMax(const cv::Mat &img, unsigned int kernelSize, uchar min, uchar max) {
     cv::Mat dst(img.rows, img.cols, CV_8UC1);
 
     std::vector<uchar> vals(kernelSize * kernelSize);
-    const int kernelArm = kernelSize / 2;
-    for (int y = kernelArm; y < img.rows - kernelArm; y++){
-        for (int x = kernelArm; x < img.cols - kernelArm; x++){
+    const int k = kernelSize / 2;
+    for (int y = k; y < img.rows - k; y++) {
+        for (int x = k; x < img.cols - k; x++) {
             int i = 0;
-            for (int yy = y - kernelArm; yy < y + kernelArm; yy++){
-                for (int xx = x - kernelArm; xx < x + kernelArm; xx++){
+            vals[0] = 0;
+            for (int yy = y - k; yy < y + k; yy++) {
+                for (int xx = x - k; xx < x + k; xx++) {
                     uchar val = img.at<uchar>(yy, xx);
                     if (min <= val && val <= max) {
                         vals[i++] = val;
@@ -21,7 +22,7 @@ cv::Mat vis::medianMinMax(const cv::Mat &img, unsigned int kernelSize, uchar min
         }
     }
 
-    dst = vis::cropBorder(dst, kernelArm);
+    dst = vis::cropBorder(dst, k);
 
     return dst;
 }

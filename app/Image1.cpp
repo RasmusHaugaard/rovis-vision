@@ -24,7 +24,6 @@ int main()
     cv::Mat median_eqHist;
     cv::equalizeHist(median, median_eqHist);
     vis::show("after eq hist", median_eqHist, 0.3);
-    cv::resize(src, src, cv::Size(1,23));
 
     cv::Mat hist_median_eqHist = vis::calcHist(median_eqHist);
     vis::showHist("median hist eq", hist_median_eqHist);

@@ -22,11 +22,31 @@ cv::Mat vis::scale(const cv::Mat &src, double scale) {
     return dst;
 }
 
-void vis::show(const cv::String& title, const cv::Mat &src, double scale){
-    if (scale == 1){
+void vis::show(const cv::String &title, const cv::Mat &src, double scale) {
+    if (scale == 1) {
         cv::imshow(title, src);
         return;
     }
     auto scaled_image = vis::scale(src, scale);
+    cv::namedWindow(title);
     cv::imshow(title, scaled_image);
+}
+
+void vis::flipQuadrants(cv::Mat &src) {
+    int cx = src.cols / 2;
+    int cy = src.rows / 2;
+
+    cv::Mat q0(src, cv::Rect(0, 0, cx, cy)); // Top-Left
+    cv::Mat q1(src, cv::Rect(cx, 0, cx, cy)); // Top-Right
+    cv::Mat q2(src, cv::Rect(0, cy, cx, cy)); // Bottom-Left
+    cv::Mat q3(src, cv::Rect(cx, cy, cx, cy)); // Bottom-Right
+
+    cv::Mat tmp;
+    q0.copyTo(tmp);
+    q3.copyTo(q0);
+    tmp.copyTo(q3);
+
+    q1.copyTo(tmp);
+    q2.copyTo(q1);
+    tmp.copyTo(q2);
 }
