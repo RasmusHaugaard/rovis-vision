@@ -1,5 +1,6 @@
-#include <opencv2/imgproc.hpp>
-#include <opencv/cv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "vis.h"
 
 cv::Mat vis::cropBorder(const cv::Mat &src, int borderWidth) {

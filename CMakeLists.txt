@@ -13,6 +13,7 @@ set(DEPENDENCIES ${OpenCV_LIBS} VIS)
 file( GLOB APP_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/app app/*.cpp )
 
 foreach( app_source ${APP_SOURCES} )
+    message(source ${app_source})
     string( REPLACE ".cpp" "" app_name ${app_source} )
     add_executable( ${app_name} app/${app_source} )
     target_link_libraries( ${app_name} ${DEPENDENCIES} )
