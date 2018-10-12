@@ -9,17 +9,11 @@ int main()
 
     vis::show("src", src, 0.3);
 
-    cv::Mat hist_src = vis::calcHist(src);
-    vis::showHist("src hist", hist_src);
-
-    cv::Mat median = vis::medianMinMax(src, 7, 0, 254);
-    vis::show("Median", median, 0.3);
-
-    cv::Mat hist_median = vis::calcHist(median);
-    vis::showHist("median hist", hist_median);
+    cv::Mat adapMedian = vis::adaptiveMedian(src, 35);
+    vis::show("adap", adapMedian, 0.3);
 
     cv::Mat median_eqHist;
-    cv::equalizeHist(median, median_eqHist);
+    cv::equalizeHist(adapMedian, median_eqHist);
 
     cv::medianBlur(median_eqHist, median_eqHist, 3);
 

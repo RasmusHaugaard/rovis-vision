@@ -23,6 +23,8 @@ namespace vis {
     // Filters
     cv::Mat medianMinMax(const cv::Mat &img, unsigned int kernelSize, uchar min, uchar max);
 
+    cv::Mat adaptiveMedian(const cv::Mat &img, unsigned int MaxKernelSize);
+
     // Utils
     cv::Mat cropBorder(const cv::Mat &src, int borderWidth);
 
