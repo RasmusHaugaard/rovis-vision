@@ -9,6 +9,8 @@ int main()
 
     vis::show("src", src, 0.3);
 
+    vis::showPartialHist("test", src);
+/*
     cv::Mat hist_src = vis::calcHist(src);
     vis::showHist("src hist", hist_src);
 
@@ -27,7 +29,7 @@ int main()
 
     cv::Mat hist_median_eqHist = vis::calcHist(median_eqHist);
     vis::showHist("median hist eq", hist_median_eqHist);
-
+*/
     cv::waitKey(0);
     return 0;
 }

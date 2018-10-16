@@ -2,6 +2,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <iostream>
+#include <cstdlib>
 
 cv::Mat vis::calcHist(const cv::Mat &img, bool accumulate) {
     const int nBins = 256;
@@ -40,5 +42,31 @@ void vis::showHist(const cv::String& title, const cv::Mat& hist, double gamma) {
     }
 
     cv::imshow(title, histImage);
+}
+
+void vis::showPartialHist(const cv::String& title, const cv::Mat& hist, double gamma)
+{
+
+    cv::Mat h = hist.clone();
+    int x = 0, y = 0;
+
+    std::vector<cv::Mat> imgCuts;
+    std::cout << h.cols << " , " << h.rows << std::endl;
+    for (int i = 0; i < 4; i++)
+    {
+        x = (rand() % h.cols-200);
+        y = (rand() % h.rows-200);
+        std::cout << x << " , " << y << std::endl;
+        imgCuts.push_back(cv::Mat(cv::Size(h.rows, h.cols), CV_8UC1, cv::Scalar(0)));
+        for (int r = y; r < 200+y; r++)
+            for (int c = x; c < 200+x; c++)
+            {
+                if(r >= h.rows || c >= h.cols)
+                    break;
+                imgCuts[i].at<uchar>(r,c) = h.at<uchar>(r,c);
+            }
+        cv::Mat tempHist = calcHist(imgCuts[i]);
+        showHist("Partial hist " + std::to_string(i), tempHist, gamma);
+    }
 }
 
