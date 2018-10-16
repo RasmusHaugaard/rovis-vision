@@ -44,7 +44,7 @@ void vis::showHist(const cv::String& title, const cv::Mat& hist, double gamma) {
     cv::imshow(title, histImage);
 }
 
-void vis::showPartialHist(const cv::String& title, const cv::Mat& hist, double gamma)
+void vis::showPartialHist(const cv::String& title, const cv::Mat& hist, double gamma, int imgCount)
 {
 
     cv::Mat h = hist.clone();
@@ -52,7 +52,7 @@ void vis::showPartialHist(const cv::String& title, const cv::Mat& hist, double g
 
     std::vector<cv::Mat> imgCuts;
     std::cout << h.cols << " , " << h.rows << std::endl;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < imgCount; i++)
     {
         x = (rand() % h.cols-200);
         y = (rand() % h.rows-200);

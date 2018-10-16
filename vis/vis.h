@@ -9,7 +9,7 @@ namespace vis {
 
     void showHist(const cv::String &title, const cv::Mat &hist, double gamma = 1);
 
-    void showPartialHist(const cv::String &title, const cv::Mat &hist, double gamma = 1);
+    void showPartialHist(const cv::String &title, const cv::Mat &hist, double gamma = 1, int imgCount = 3);
 
     cv::Mat fft2d(const cv::Mat &img);
 
