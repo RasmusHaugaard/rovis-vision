@@ -46,18 +46,18 @@ cv::Mat vis::histogramStretch(const cv::Mat &src, float threshold) {
     for (int i = 1; i < 256; i++)
         hist.at<float>(i) += hist.at<float>(i - 1);
 
-    uchar mi = 1, ma = 254;
+    uchar mi = 0, ma = 255;
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 1; i < 256; i++) {
         if (hist.at<float>(i) > t) {
-            mi = (uchar) i;
+            mi = uchar(i - 1);
             break;
         }
     }
 
-    for (int i = 255; i >= 0; i--) {
+    for (int i = 254; i > -1; i--) {
         if (hist.at<float>(i) < m * n - t) {
-            ma = (uchar) i;
+            ma = uchar(i + 1);
             break;
         }
     }

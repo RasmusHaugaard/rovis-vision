@@ -4,8 +4,8 @@ project(rovis-vision)
 set(CMAKE_CXX_STANDARD 11)
 find_package(OpenCV REQUIRED)
 
-file( GLOB VIS_SOURCES vis/*.cpp )
-add_library( VIS vis/vis.h ${VIS_SOURCES})
+file( GLOB VIS_SOURCES vis/*.h vis/*.cpp )
+add_library( VIS ${VIS_SOURCES})
 include_directories(vis)
 
 set(DEPENDENCIES ${OpenCV_LIBS} VIS)

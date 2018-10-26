@@ -1,90 +1,74 @@
 #include <iostream>
 #include "vis.h"
 
-cv::Mat vis::medianMinMax(const cv::Mat &img, unsigned int kernelSize, uchar min, uchar max) {
-    cv::Mat dst(img.rows, img.cols, CV_8UC1);
+cv::Mat vis::meanMinMax(const cv::Mat &src, unsigned int kernelSize, uchar min, uchar max) {
+    cv::Mat dst(src.rows, src.cols, CV_8UC1);
 
-    std::vector<uchar> vals(kernelSize * kernelSize);
-    const int k = kernelSize / 2;
-    for (int y = k; y < img.rows - k; y++) {
-        for (int x = k; x < img.cols - k; x++) {
-            int i = 0;
-            vals[0] = 0;
-            for (int yy = y - k; yy < y + k; yy++) {
-                for (int xx = x - k; xx < x + k; xx++) {
-                    uchar val = img.at<uchar>(yy, xx);
-                    if (min <= val && val <= max) {
-                        vals[i++] = val;
-                    }
-                }
-            }
-            std::sort(vals.begin(), vals.begin() + i);
-            dst.at<uchar>(y, x) = vals[i / 2];
+    std::vector<uchar> kernel(kernelSize * kernelSize);
+    for (int y = 0; y < src.rows; y++) {
+        for (int x = 0; x < src.cols; x++) {
+            int size = vis::extractKernel(src, kernel, x, y, kernelSize);
+            int validSize = 0, sum = 0;
+            for (int j = 0; j < size; j++)
+                if (min <= kernel[j] && kernel[j] <= max)
+                    sum += kernel[j], validSize++;
+            dst.at<uchar>(y, x) = uchar(round(double(sum) / validSize));
         }
     }
 
-    dst = vis::cropBorder(dst, k);
+    return dst;
+}
+
+cv::Mat vis::medianMinMax(const cv::Mat &src, unsigned int kernelSize, uchar min, uchar max) {
+    cv::Mat dst(src.rows, src.cols, CV_8UC1);
+
+    std::vector<uchar> kernel(kernelSize * kernelSize);
+    std::vector<uchar> vals(kernelSize * kernelSize);
+    for (int y = 0; y < src.rows; y++) {
+        for (int x = 0; x < src.cols; x++) {
+            int size = vis::extractKernel(src, kernel, x, y, kernelSize);
+            int validSize = 0;
+            for (int j = 0; j < size; j++)
+                if (min <= kernel[j] && kernel[j] <= max)
+                    vals[validSize++] = kernel[j];
+            std::sort(vals.begin(), vals.begin() + validSize);
+            dst.at<uchar>(y, x) = vals[validSize / 2];
+        }
+    }
+
+    return dst;
+}
+
+cv::Mat vis::maxFilter(const cv::Mat &src, unsigned int kernelSize) {
+    cv::Mat dst(src.rows, src.cols, CV_8UC1);
+
+    std::vector<uchar> kernel(kernelSize * kernelSize);
+    for (int y = 0; y < src.rows; y++) {
+        for (int x = 0; x < src.cols; x++) {
+            int size = vis::extractKernel(src, kernel, x, y, kernelSize);
+            dst.at<uchar>(y, x) = *std::max_element(kernel.begin(), kernel.begin() + size);
+        }
+    }
 
     return dst;
 }
 
 
-cv::Mat vis::adaptiveMedian(const cv::Mat &img, unsigned int MaxKernelSize)
-{
+cv::Mat vis::adaptiveMedian(const cv::Mat &img, unsigned int maxKernelSize) {
     cv::Mat dst(img.rows, img.cols, CV_8UC1);
-    int kernelSize = 3;
-    bool decreaseY;
-
-    std::vector<uchar> vals;
-    int k = kernelSize / 2;
-    for (int y = 1; y < img.rows - 1; y++)
-    {
-        for (int x = 1; x < img.cols - 1; x++)
-        {
-            int i = 0;
-            vals.clear();
-            decreaseY = false;
-            for (int yy = y - k; yy < y + k; yy++)
-            {
-                for (int xx = x - k; xx < x + k; xx++)
-                {
-                    vals.push_back(img.at<uchar>(yy, xx));
-                    i++;
-                }
+    for (int y = 0; y < img.rows; y++) {
+        for (int x = 0; x < img.cols; x++) {
+            uchar med = 0;
+            for (unsigned int kSize = 3; kSize <= maxKernelSize; kSize += 2) {
+                auto kernel = vis::extractKernel(img, x, y, kSize);
+                std::sort(kernel.begin(), kernel.end());
+                uchar min = kernel[0];
+                uchar max = kernel[kernel.size() - 1];
+                med = kernel[kernel.size() / 2];
+                if (!(min == med || med == max)) break;
             }
-            std::sort(vals.begin(), vals.begin() + i);
-            //std::cout << vals.size() << std::endl;
-            //std::cout << "X: " << x << "   y: " << y << "   Kernelsize: " << kernelSize << "   Val: " << static_cast<int>(vals[i/2]) << std::endl;
-
-            if (!(vals[i/2] == 0 || vals[i/2] == 255))
-            {
-                dst.at<uchar>(y, x) = vals[i / 2];
-                //std::cout << "Kernel Size: " << kernelSize << "   Pixel value: " << static_cast<int>(vals[i/2]) << std::endl;
-                kernelSize = 3;
-            }
-            else if(kernelSize == MaxKernelSize)
-            {
-                dst.at<uchar>(y, x) = vals[i / 2];
-                //std::cout << "Kernel Size: " << kernelSize << "   Pixel value: " << static_cast<int>(vals[i/2]) << std::endl;
-                kernelSize = 3;
-            }
-            else
-            {
-                //std::cout << "Size++:  Kernel Size: " << kernelSize << "   Pixel value: " << static_cast<int>(vals[i/2]) << std::endl;
-                if (!(x < k || x > img.cols - k || y < k || y > img.rows - k))
-                {
-                    kernelSize = kernelSize+2;
-                    x--;
-                    decreaseY = true;
-                }
-            }
-            k = kernelSize / 2;
+            dst.at<uchar>(y, x) = med;
         }
-        if (decreaseY)
-            y--;
     }
-
-    dst = vis::cropBorder(dst, k);
-
     return dst;
 }

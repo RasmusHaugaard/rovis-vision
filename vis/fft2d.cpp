@@ -28,7 +28,7 @@ cv::Mat vis::ifft2d(const cv::Mat &fft2d) {
     return img(cv::Rect(0, 0, cmplx.cols / 2, cmplx.rows / 2));
 }
 
-void vis::showfft2dMagnitude(const cv::String &title, const cv::Mat &fft2d, double scale) {
+cv::Mat vis::fft2dMagnitude(const cv::Mat &fft2d) {
     // compute the magnitude
     // => sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
     cv::Mat res;
@@ -40,5 +40,5 @@ void vis::showfft2dMagnitude(const cv::String &title, const cv::Mat &fft2d, doub
     res += cv::Scalar::all(1);
     cv::log(res, res);
     cv::normalize(res, res, 0, 1, CV_MINMAX);
-    vis::show(title, res, scale);
+    return res;
 }

@@ -17,7 +17,7 @@ cv::Mat vis::calcHist(const cv::Mat &img, bool accumulate) {
     return hist;
 }
 
-void vis::showHist(const cv::String& title, const cv::Mat& hist, double gamma) {
+cv::Mat vis::histImage(const cv::Mat &hist, double gamma) {
     const int nBins = hist.rows;
     int hist_w = nBins;
     int hist_h = nBins;
@@ -26,7 +26,7 @@ void vis::showHist(const cv::String& title, const cv::Mat& hist, double gamma) {
 
     cv::normalize(h, h, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
 
-    for (int i = 0; i < nBins; i++){
+    for (int i = 0; i < nBins; i++) {
         h.at<float>(i) = (float) pow(h.at<float>(i), gamma);
     }
 
@@ -41,32 +41,10 @@ void vis::showHist(const cv::String& title, const cv::Mat& hist, double gamma) {
         );
     }
 
-    cv::imshow(title, histImage);
+    return histImage;
 }
 
-void vis::showPartialHist(const cv::String& title, const cv::Mat& hist, double gamma, int imgCount)
-{
-
-    cv::Mat h = hist.clone();
-    int x = 0, y = 0;
-
-    std::vector<cv::Mat> imgCuts;
-    std::cout << h.cols << " , " << h.rows << std::endl;
-    for (int i = 0; i < imgCount; i++)
-    {
-        x = (rand() % h.cols-200);
-        y = (rand() % h.rows-200);
-        std::cout << x << " , " << y << std::endl;
-        imgCuts.push_back(cv::Mat(cv::Size(h.rows, h.cols), CV_8UC1, cv::Scalar(0)));
-        for (int r = y; r < 200+y; r++)
-            for (int c = x; c < 200+x; c++)
-            {
-                if(r >= h.rows || c >= h.cols)
-                    break;
-                imgCuts[i].at<uchar>(r,c) = h.at<uchar>(r,c);
-            }
-        cv::Mat tempHist = calcHist(imgCuts[i]);
-        showHist("Partial hist " + std::to_string(i), tempHist, gamma);
-    }
+void vis::showHist(const cv::String &title, const cv::Mat &hist, double gamma) {
+    cv::imshow(title, vis::histImage(hist, gamma));
 }
 
