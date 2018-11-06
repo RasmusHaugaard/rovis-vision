@@ -1,5 +1,7 @@
-CmakeLists.txt
-cmake-build-debug
+RoVi_Final_Project/CmakeLists.txt
+Vision_mini_project/CmakeLists.txt
+RoVi_Final_Project/cmake-build-debug
+Vision_mini_project/cmake-build-debug
 .idea
 **/.DS_Store
-results
+Vision_mini_project/results
