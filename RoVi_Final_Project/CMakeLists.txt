@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.12)
-project(RoVi_final)
+project(rovis-vision-final)
 
-set(CMAKE_CXX_STANDARD 14)
-
+set(CMAKE_CXX_STANDARD 11)
 find_package(OpenCV REQUIRED)
-set(DEPENDENCIES ${OpenCV_LIBS})
 
+#file( GLOB VIS_SOURCES vis/*.h vis/*.cpp )
+#add_library( VIS ${VIS_SOURCES})
+#include_directories(vis)
 
-add_executable(RoVi_final main.cpp)
+set(DEPENDENCIES ${OpenCV_LIBS} ) #VIS)
 
-target_link_libraries (RoVi_final ${DEPENDENCIES})
+file( GLOB APP_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/app app/*.cpp )
+
+foreach( app_source ${APP_SOURCES} )
+    message(source ${app_source})
+    string( REPLACE ".cpp" "" app_name ${app_source} )
+    add_executable( ${app_name} app/${app_source} )
+    target_link_libraries( ${app_name} ${DEPENDENCIES} )
+endforeach( app_source ${APP_SOURCES} )
