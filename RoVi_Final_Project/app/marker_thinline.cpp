@@ -105,9 +105,23 @@ int main() {
 
                 }
             }
-            for (auto &m : markers)
+            for (int m = 0; m < markers.size(); m++)
             {
-                
+                int m_dist = markers[m].x * markers[m].y;
+                for (int mx = m+1; mx < markers.size(); mx++)
+                {
+                    int dist_counter = 0;
+                    int mx_dist = markers[mx].x * markers[mx].y;
+
+                    if (m_dist > mx_dist - 2 && m_dist < mx_dist + 2)
+                        dist_counter++;
+
+                    if (dist_counter < 3)
+                    {
+                        markers.erase(markers.begin() + m);
+                        m--;
+                    }
+                }
             }
 
             std::cout << "Number of lines: " << lines.size() << std::endl;
